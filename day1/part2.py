@@ -2,43 +2,28 @@ import numpy as np
 import math
 import string
 
-def deleteDigits(line):
+def convertLine(line):
     digits = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"]
-    lowestInd = math.inf
-    digitToRemove = ""
+    # Note: This only works because there's always a digit in every line
+    firstDigit = [char for char in line if char in string.digits][0] # Gets the first character digit from the line
+    lowestInd = line.find(firstDigit)
     for digit in digits:
         if line.find(digit) != -1 and line.find(digit) < lowestInd:
             lowestInd = line.find(digit)
-            digitToRemove = digit
-    if lowestInd != math.inf:
-        line = line[:lowestInd] + str(digits.index(digitToRemove)) + line[lowestInd + len(digitToRemove):]
+            firstDigit = digits.index(digit)
 
-    highestInd = -math.inf
-    digitToRemove = ""
+    lastDigit = [char for char in line if char in string.digits][-1]
+    highestInd = line.rfind(lastDigit)
     for digit in digits:
-        if line.rfind(digit) != -1 and line.find(digit) > highestInd:
+        if line.rfind(digit) != -1 and line.rfind(digit) > highestInd:
             highestInd = line.rfind(digit)
-            digitToRemove = digit
-    if highestInd != -math.inf:
-        line = line[:highestInd] + str(digits.index(digitToRemove)) + line[highestInd + len(digitToRemove):]
-    return line
+            lastDigit = digits.index(digit)
+    return int(firstDigit) * 10 + int(lastDigit)
 
 input = open("input.txt").readlines()
 
 for i, line in enumerate(input):
-    input[i] = deleteDigits(line)
+    input[i] = convertLine(line)
 
-for i, line in enumerate(input):
-    line_list = []
-    for char in line:
-        if char in string.digits:
-            line_list.append(char)
-    input[i] = ''.join(line_list)
-
-result = 0
-for number in input:
-    ones_place = int(number[-1])
-    tens_place = int(number[0]) * 10
-    result += ones_place
-    result += tens_place
+result = sum(input)
 print(result)
