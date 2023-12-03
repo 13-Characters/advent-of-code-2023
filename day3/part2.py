@@ -20,7 +20,7 @@ for y, row in enumerate(johns_matrix):
             length += 1
         else: length = 0
 
-indicesToRemove = []
+gearDictionary = {}
 for i in range(len(number_positions)):
     number_position = number_positions[i]
     number = numbers[i]
@@ -28,15 +28,17 @@ for i in range(len(number_positions)):
     for y in range(number_position[1]-1, number_position[1]+2):
         for x in range(number_position[0]-1, number_position[0]+number_position[2]+1):
             if (0 <= x < len(johns_matrix[0].removesuffix("\n")) and 0 <= y < len(johns_matrix)
-                    and johns_matrix[y][x] in string.punctuation and johns_matrix[y][x] != "."):
-                numberIsValid = True
-                break
-    if not numberIsValid:
-        indicesToRemove.append(i)
+                    and johns_matrix[y][x] == "*"):
+                if (x, y) in gearDictionary:
+                    temp = gearDictionary[(x,y)]
+                    temp.append(number)
+                    gearDictionary[(x,y)] = temp
+                else:
+                    gearDictionary[(x, y)] = [number]
 
-for index in reversed(indicesToRemove):
-    number_positions.pop(index)
-    numbers.pop(index)
-
-print(sum(numbers))
-
+result = 0
+for gearPos in gearDictionary:
+    if len(gearDictionary[gearPos]) == 2:
+        gear = gearDictionary[gearPos]
+        result += gear[0] * gear[1]
+print(result)
