@@ -6,7 +6,6 @@ for i, line in enumerate(input):
     winning, card = line.split(" | ")
     winning_numbers = set([w for w in winning.split(" ") if w != "" and w != " "]) # list comprehension is in so nothing weird happens
     card_numbers = set([c for c in card.split(" ") if c != "" and c != " "])
-
     if len(winning_numbers & card_numbers) > 0:
         card_value = 1 << (len(winning_numbers & card_numbers) - 1)
     else: card_value = 0
