@@ -11,8 +11,7 @@ def playCard(i):
     if len(winning_numbers & card_numbers) > 0:
         for a in range(i+1, i + len(winning_numbers & card_numbers) + 1):
             cardsWon += playCard(a)
-        cardsWon += 1
-    else: cardsWon = 1
+    cardsWon += 1
     return cardsWon
 
 for i in range(len(input)):
