@@ -4,7 +4,6 @@ def reflectionTester(grid: list[list[str]]):
     # Find potential reflection line
     for i, row in enumerate(grid):
         if row not in grid[i+1:]:
-            reflectionRowFound = False
             continue
         else:
             j = -1
@@ -36,15 +35,11 @@ for line in input:
         parsedInput[-1].append(list(line.removesuffix("\n")))
 
 result = 0
-counter = 0
 for grid in parsedInput:
-    counter += 1
     if reflectionTester(grid) != -1:
         result += 100 * reflectionTester(grid)
-        print(counter, reflectionTester(grid), "horizontal")
     else:
         grid = [list(x) for x in np.array(grid).transpose()]
         if reflectionTester(grid) != -1:
             result += reflectionTester(grid)
-            print(counter, reflectionTester(grid), "vertical")
 print(result)
