@@ -25,7 +25,7 @@ def evalPath(startingPosition: tuple, instructions: str):
 grid = [list(line.removesuffix("\n")) for line in open("input.txt").readlines()]
 heatLossDict = {}
 endingPositionDict = {}
-n = 5
+n = 4
 for i in range(6 ** n): # Generates all possible starting paths with 6 turns (there are 93312)
     path = ""
     for j in range(n):
@@ -48,7 +48,7 @@ for i in range(6 ** n): # Generates all possible starting paths with 6 turns (th
 
 start_time = time.time()
 # Only keep the best distances
-threshold = min(sorted([coord[0] + coord[1] for coord in endingPositionDict.values()], reverse=True)[0:500])
+threshold = min(sorted([coord[0] + coord[1] for coord in endingPositionDict.values()], reverse=True)[0:100])
 popList = []
 for key in endingPositionDict:
     if endingPositionDict[key][0] + endingPositionDict[key][1] < threshold:
@@ -58,7 +58,7 @@ for key in popList:
     heatLossDict.pop(key)
 
 # Sorry if this crosses the border
-border = max(sorted(list(heatLossDict.values()))[0:100])
+border = max(sorted(list(heatLossDict.values()))[0:20])
 popList = []
 for key in heatLossDict:
     if heatLossDict[key] > border:
@@ -84,11 +84,19 @@ while runLoop:
         temp = []
         for key in heatLossCopy.keys():
             eval = evalPath((0, 0), key + path)
-            temp.append((key + path, evalHeatLoss(eval), eval[-1]))
+            if 0 <= eval[-1][0] < len(grid[0]) and 0 <= eval[-1][1] < len(grid):
+                temp.append((key + path, evalHeatLoss(eval), eval[-1]))
+            else:
+                if eval[-1][0] >= len(grid[0]) or eval[-1][1] >= len(grid):
+                    for l in range(1, len(eval) - 2):
+                        if eval[-l][0] < len(grid[0]) and eval[-l][1] < len(grid):
+                            eval = evalPath((0, 0), key + path[:-l-1])
+                            temp.append((key + path[:-l-1], evalHeatLoss(eval), eval[-1]))
+                            break
         for t in temp:
             heatLossDict[t[0]] = t[1]
             endingPositionDict[t[0]] = t[2]
-    threshold = min(sorted([coord[0] + coord[1] for coord in endingPositionDict.values()], reverse=True)[0:500])
+    threshold = min(sorted([coord[0] + coord[1] for coord in endingPositionDict.values()], reverse=True)[0:100])
     popList = []
     for key in endingPositionDict:
         if endingPositionDict[key][0] + endingPositionDict[key][1] < threshold:
@@ -97,7 +105,7 @@ while runLoop:
         endingPositionDict.pop(key)
         heatLossDict.pop(key)
     # Sorry if this crosses the border
-    border = max(sorted(list(heatLossDict.values()))[0:100])
+    border = max(sorted(list(heatLossDict.values()))[0:20])
     popList = []
     for key in heatLossDict:
         if heatLossDict[key] > border:
@@ -109,4 +117,5 @@ while runLoop:
     if [coord == (len(grid[0]) - 1, len(grid) - 1) for coord in endingPositionDict.values()].count(True) > (2 * len(endingPositionDict) / 3):
         runLoop = False
 
+# This does not produce a correct value
 print(min(heatLossDict.values()))
